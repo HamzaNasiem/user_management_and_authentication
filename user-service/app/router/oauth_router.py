@@ -1,6 +1,11 @@
-from fastapi import APIRouter
-from typing import Optional
+# router/oauth_router.py
+from fastapi import APIRouter, HTTPException, Depends
 import requests
+from app.settings import (
+    OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET,
+    OAUTH_REDIRECT_URI, OAUTH_SCOPE,
+    OAUTH_AUTH_URL, OAUTH_TOKEN_URL
+)
 
 oauth_router = APIRouter(
     prefix="/oauth",
@@ -9,22 +14,31 @@ oauth_router = APIRouter(
 
 
 @oauth_router.get("/authorize")
-async def initiate_oauth_login(client_id: str, redirect_uri: str, response_type: str = "code", scope: str = "", state: str = ""):
-    authorization_url = f"https://oauth.provider.com/authorize?client_id={client_id}&redirect_uri={
-        redirect_uri}&response_type={response_type}&scope={scope}&state={state}"
-    return {"redirect_url": authorization_url}
+async def initiate_oauth_login():
+    auth_url = (
+        f"{OAUTH_AUTH_URL}"
+        f"?client_id={OAUTH_CLIENT_ID}"
+        f"&redirect_uri={OAUTH_REDIRECT_URI}"
+        f"&response_type=code"
+        f"&scope={OAUTH_SCOPE}"
+    )
+    return {"auth_url": auth_url}
 
 
 @oauth_router.post("/token")
-async def exchange_code_for_token(grant_type: str, code: Optional[str] = None, redirect_uri: Optional[str] = None, refresh_token: Optional[str] = None, client_id: str = "", client_secret: str = ""):
-    token_url = "https://oauth.provider.com/token"
-    payload = {
-        "grant_type": grant_type,
+async def exchange_code_for_token(code: str):
+    token_data = {
+        "grant_type": "authorization_code",
         "code": code,
-        "redirect_uri": redirect_uri,
-        "refresh_token": refresh_token,
-        "client_id": client_id,
-        "client_secret": client_secret
+        "redirect_uri": OAUTH_REDIRECT_URI,
+        "client_id": OAUTH_CLIENT_ID,
+        "client_secret": OAUTH_CLIENT_SECRET,
     }
-    response = requests.post(token_url, data=payload)
-    return response.json()
+
+    try:
+        response = requests.post(OAUTH_TOKEN_URL, data=token_data)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        raise HTTPException(
+            status_code=400, detail=f"Failed to exchange token: {e}")

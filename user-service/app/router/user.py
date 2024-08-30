@@ -8,7 +8,6 @@ from app.auth import hash_password, get_current_user, authenticate_user, create_
 from app.db_engine import get_session
 from app.utils import send_whatsapp_message
 
-
 user_router = APIRouter(
     prefix="/user",
     tags=["user"]
@@ -50,7 +49,6 @@ async def register_user(new_user: Register_User, session: Session = Depends(get_
                 status_code=500, detail="User registered but failed to send WhatsApp message")
 
     return user
-
 
 
 @user_router.post("/login", response_model=Token)

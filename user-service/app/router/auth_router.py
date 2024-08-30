@@ -1,3 +1,4 @@
+# router/auth_router.py
 from fastapi import APIRouter, Depends, HTTPException
 from app.auth import get_current_user, hash_password, verify_password
 from app.models import User

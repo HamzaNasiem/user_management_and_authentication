@@ -5,8 +5,8 @@ from app.router.student_router import student_router
 from app.router.oauth_router import oauth_router
 from app.router.auth_router import auth_router
 from app.db_engine import create_db_and_tables
-from app.db_engine import create_db_and_tables
 from app.router.teacher import teacher_router
+
 app = FastAPI(title="Panaversity User Management and Authentication")
 
 

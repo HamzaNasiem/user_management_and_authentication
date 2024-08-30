@@ -1,4 +1,8 @@
 # Panaversity User Management and Authentication
+<<<<<<< HEAD
+=======
+
+>>>>>>> a476521011f9f05eb65ca4442fc5a7a036e7348c
 This is a FastAPI project for user management and authentication.
 
 ## Setup Instructions
@@ -31,3 +35,7 @@ docker-compose up --build
 ### 4. Access the Application
 Open your browser and go to [http://localhost:8000](http://localhost:8000).
 The Swagger documentation is available at [http://localhost:8000/docs](http://localhost:8000/docs).
+<<<<<<< HEAD
+=======
+
+>>>>>>> a476521011f9f05eb65ca4442fc5a7a036e7348c

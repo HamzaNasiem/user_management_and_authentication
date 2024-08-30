@@ -1,8 +1,4 @@
 # Panaversity User Management and Authentication
-<<<<<<< HEAD
-=======
-
->>>>>>> a476521011f9f05eb65ca4442fc5a7a036e7348c
 This is a FastAPI project for user management and authentication.
 
 ## Setup Instructions
@@ -15,6 +11,7 @@ cd user_management_and_authentication
 ### 2. Set Up Environment Variables
 
 Create a `.env` file in the root directory of the project and add the following keys with your own values:
+```
 DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<database_name>
 SECRET_KEY=your_secret_key
 ALGORITHM=HS256
@@ -26,16 +23,13 @@ OAUTH_REDIRECT_URI=https://yourdomain.com/oauth/callback
 OAUTH_SCOPE=email profile
 OAUTH_AUTH_URL=https://oauthprovider.com/authorize
 OAUTH_TOKEN_URL=https://oauthprovider.com/token
+```
 
 **Note:** Never share your `.env` file or its contents publicly.
 ### 3. Build and Run the Application Using Docker Compose
 ```bash
 docker-compose up --build
-
+```
 ### 4. Access the Application
 Open your browser and go to [http://localhost:8000](http://localhost:8000).
 The Swagger documentation is available at [http://localhost:8000/docs](http://localhost:8000/docs).
-<<<<<<< HEAD
-=======
-
->>>>>>> a476521011f9f05eb65ca4442fc5a7a036e7348c

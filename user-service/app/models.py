@@ -37,30 +37,36 @@ class Teacher(SQLModel, table=True):
     user: Optional[User] = Relationship(back_populates="teacher")
 
 def format_phone_number(value: str) -> str:
+   
     value = re.sub(r'\D', '', value)
-    
+
+ 
     if value.startswith("92") and len(value) == 12:
-        return f"+{value}"
+        return value 
     
-    elif value.startswith("923") and len(value) == 12:
-        return f"+{value}"
-    
-    elif value.startswith("03") and len(value) == 11:
-        return f"+92{value[1:]}"
+    elif value.startswith("0") and len(value) == 11:
+        return f"92{value[1:]}" 
     
     elif len(value) == 10:
-        return f"+92{value}"
-
+        return f"92{value}"
+    
+    elif value.startswith("923") and len(value) == 12:
+        return value[1:]
+    
+    elif value.startswith("+92") and len(value) == 13:
+        return value[1:]
+    
     else:
-        raise ValueError("Invalid phone number format. Please use +923172532350 format.")
+        raise ValueError("Invalid phone number format. Please use a valid format.")
 
 try:
-    print(format_phone_number("03172532350"))  # "+923172532350"
-    print(format_phone_number("3172532350"))   # "+923172532350"
-    print(format_phone_number("923172532350")) # "+923172532350"
-    print(format_phone_number("+923172532350"))# "+923172532350"
+    print(format_phone_number("03172532350"))  
+    print(format_phone_number("3172532350"))   
+    print(format_phone_number("923172532350")) 
+    print(format_phone_number("+923172532350"))
 except ValueError as e:
     print(e)
+
 
 
 class Register_User(BaseModel):

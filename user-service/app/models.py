@@ -1,9 +1,11 @@
 #models.py
+from pydantic import BaseModel, EmailStr, validator
 from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlalchemy import Enum as SQLAEnum, JSON
 from typing import Optional, List
 from enum import Enum
-
+import re
+from pydantic import BaseModel, validator, ValidationError
 
 class UserType(str, Enum):
     ADMIN = "admin"
@@ -36,7 +38,44 @@ class Teacher(SQLModel, table=True):
 
 
 
-class Register_User(SQLModel):
+# class Register_User(SQLModel):
+#     full_name: str
+#     email: str
+#     password: str
+#     phone: Optional[str] = None
+#     affiliation: Optional[str] = None
+#     is_verified: Optional[bool] = False
+#     user_type: UserType
+
+
+def format_phone_number(value: str) -> str:
+    value = re.sub(r'\D', '', value)
+    
+    if value.startswith("92") and len(value) == 12:
+        return f"+{value}"
+    
+    elif value.startswith("923") and len(value) == 12:
+        return f"+{value}"
+    
+    elif value.startswith("03") and len(value) == 11:
+        return f"+92{value[1:]}"
+    
+    elif len(value) == 10:
+        return f"+92{value}"
+
+    else:
+        raise ValueError("Invalid phone number format. Please use +923172532350 format.")
+
+try:
+    print(format_phone_number("03172532350"))  # "+923172532350"
+    print(format_phone_number("3172532350"))   # "+923172532350"
+    print(format_phone_number("923172532350")) # "+923172532350"
+    print(format_phone_number("+923172532350"))# "+923172532350"
+except ValueError as e:
+    print(e)
+
+
+class Register_User(BaseModel):
     full_name: str
     email: str
     password: str
@@ -45,6 +84,12 @@ class Register_User(SQLModel):
     is_verified: Optional[bool] = False
     user_type: UserType
 
+    @validator('phone')
+    def validate_and_format_phone_number(cls, value):
+        if value:
+            formatted_value = format_phone_number(value)
+            return formatted_value
+        return value
 
 
 class Token(SQLModel, table=True):

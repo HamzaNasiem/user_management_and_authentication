@@ -22,6 +22,7 @@ class User(SQLModel, table=True):
     affiliation: Optional[str] = None
     is_verified: Optional[bool] = False
     password: str
+    otp: Optional[str] = None 
     user_type: UserType = Field(sa_column=Column(SQLAEnum(UserType)))
 
     teacher: Optional["Teacher"] = Relationship(back_populates="user")

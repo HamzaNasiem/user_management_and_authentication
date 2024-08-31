@@ -1,40 +1,44 @@
 # router/auth_router.py
-# from datetime import datetime, timedelta
-# import random
+import random
 from fastapi import APIRouter, Depends, HTTPException
 from app.auth import get_current_user, hash_password, verify_password
 from app.models import User
 from sqlmodel import Session, select
 from app.db_engine import get_session
-# from app.utils import send_whatsapp_message
+from app.utils import send_whatsapp_message
 
 auth_router = APIRouter(
     prefix="/auth",
     tags=["auth"]
 )
 
+@auth_router.post("/request-otp")
+async def request_otp(phone: str, session: Session = Depends(get_session)):
+    user = session.exec(select(User).where(User.phone == phone)).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found with this phone number")
 
-@auth_router.post("/password-reset")
-async def initiate_password_reset(email: str):
-    return {"status": "success", "message": "Password reset link has been sent to your email."}
-
-
-@auth_router.post("/password-update")
-async def update_password(current_password: str, new_password: str, current_user: User = Depends(get_current_user), session: Session = Depends(get_session)):
-    if not verify_password(current_password, current_user.password):
-        raise HTTPException(
-            status_code=401, detail="Current password is incorrect")
-
-    current_user.password = hash_password(new_password)
-    session.add(current_user)
+    otp = str(random.randint(100000, 999999)) 
+    user.otp = otp 
+    session.add(user)
     session.commit()
 
-    return {"status": "success", "message": "Password updated successfully."}
+    send_whatsapp_message(phone, f"Your OTP is {otp}") 
 
+    return {"status": "success", "message": "OTP sent successfully"}
 
-@auth_router.post("/verify-contact")
-async def verify_contact(verification_type: str, contact: str, verification_code: str):
-    return {"status": "success", "message": "Email/Phone verification successful."}
+@auth_router.post("/verify-otp-update-password")
+async def verify_otp_and_update_password(phone: str, otp: str, new_password: str, session: Session = Depends(get_session)):
+    user = session.exec(select(User).where(User.phone == phone)).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found with this phone number")
+    
+    if user.otp != otp:
+        raise HTTPException(status_code=400, detail="Invalid OTP")
 
+    user.password = hash_password(new_password)
+    user.otp = None 
+    session.add(user)
+    session.commit()
 
-
+    return {"status": "success", "message": "Password updated successfully"}

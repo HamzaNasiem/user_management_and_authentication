@@ -39,23 +39,16 @@ class Teacher(SQLModel, table=True):
 def format_phone_number(value: str) -> str:
    
     value = re.sub(r'\D', '', value)
-
- 
     if value.startswith("92") and len(value) == 12:
         return value 
-    
     elif value.startswith("0") and len(value) == 11:
         return f"92{value[1:]}" 
-    
     elif len(value) == 10:
         return f"92{value}"
-    
     elif value.startswith("923") and len(value) == 12:
         return value[1:]
-    
     elif value.startswith("+92") and len(value) == 13:
         return value[1:]
-    
     else:
         raise ValueError("Invalid phone number format. Please use a valid format.")
 

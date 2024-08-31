@@ -1,9 +1,12 @@
 # router/auth_router.py
+# from datetime import datetime, timedelta
+# import random
 from fastapi import APIRouter, Depends, HTTPException
 from app.auth import get_current_user, hash_password, verify_password
 from app.models import User
-from sqlmodel import Session
+from sqlmodel import Session, select
 from app.db_engine import get_session
+# from app.utils import send_whatsapp_message
 
 auth_router = APIRouter(
     prefix="/auth",
@@ -32,3 +35,6 @@ async def update_password(current_password: str, new_password: str, current_user
 @auth_router.post("/verify-contact")
 async def verify_contact(verification_type: str, contact: str, verification_code: str):
     return {"status": "success", "message": "Email/Phone verification successful."}
+
+
+

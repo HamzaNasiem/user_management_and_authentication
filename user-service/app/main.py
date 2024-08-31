@@ -20,7 +20,7 @@ def on_startup():
 
 @app.get("/")
 def root():
-    return{"message": "This is just an authentication service. Please visit f'http://localhost:8000/docs' to see the API documentation."}
+    return{"message": "This is just an authentication service. Please visit http://localhost:8000/docs to see the API documentation."}
 
 app.include_router(user_router, prefix="/api/v1/user")
 app.include_router(teacher_router, prefix="/api/v1/teacher")

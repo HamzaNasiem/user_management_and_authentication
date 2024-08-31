@@ -36,18 +36,6 @@ class Teacher(SQLModel, table=True):
 
     user: Optional[User] = Relationship(back_populates="teacher")
 
-
-
-# class Register_User(SQLModel):
-#     full_name: str
-#     email: str
-#     password: str
-#     phone: Optional[str] = None
-#     affiliation: Optional[str] = None
-#     is_verified: Optional[bool] = False
-#     user_type: UserType
-
-
 def format_phone_number(value: str) -> str:
     value = re.sub(r'\D', '', value)
     

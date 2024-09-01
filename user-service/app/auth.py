@@ -8,9 +8,10 @@ from fastapi.security import OAuth2PasswordBearer
 from app.models import User
 from app.db_engine import get_session
 from app.settings import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from app.utils import send_whatsapp_message
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/user/user/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/user/login")
 
 
 
@@ -57,3 +58,20 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session: Session
     if user is None:
         raise credentials_exception
     return user
+
+
+async def create_and_send_magic_link(user, phone: str):
+    # Generate token with phone number and email
+    expire = datetime.utcnow() + timedelta(minutes=15)  # Token expires in 15 minutes
+    token_data = {"sub": user.email, "phone": user.phone, "exp": expire}
+    token = jwt.encode(token_data, SECRET_KEY, algorithm=ALGORITHM)
+    
+    # Generate the verification URL
+    url = f"http://localhost:8000/api/v1/user/verify?token={token}"
+    
+    # Message to be sent
+    sms_message = f"Click the link to verify your phone number: {url}. The link expires in 15 minutes."
+    
+    # Send the WhatsApp message
+    whatsapp_response = send_whatsapp_message(phone, sms_message)
+    return whatsapp_response

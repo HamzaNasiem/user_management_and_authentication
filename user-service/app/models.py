@@ -81,6 +81,6 @@ class Register_User(BaseModel):
 
 
 class Token(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)    
     access_token: str
     token_type: str

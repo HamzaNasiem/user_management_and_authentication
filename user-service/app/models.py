@@ -53,15 +53,6 @@ def format_phone_number(value: str) -> str:
     else:
         raise ValueError("Invalid phone number format. Please use a valid format.")
 
-try:
-    print(format_phone_number("03172532350"))  
-    print(format_phone_number("3172532350"))   
-    print(format_phone_number("923172532350")) 
-    print(format_phone_number("+923172532350"))
-except ValueError as e:
-    print(e)
-
-
 
 class Register_User(BaseModel):
     full_name: str

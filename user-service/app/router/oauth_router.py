@@ -7,10 +7,7 @@ from app.settings import (
     OAUTH_AUTH_URL, OAUTH_TOKEN_URL
 )
 
-oauth_router = APIRouter(
-    prefix="/oauth",
-    tags=["oauth"]
-)
+oauth_router = APIRouter()
 
 
 @oauth_router.get("/authorize")

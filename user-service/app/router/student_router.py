@@ -4,12 +4,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from app.models import User
-from app.db_engine import get_session
+from app.database import get_session
 
-student_router = APIRouter(
-    prefix="/student",
-    tags=["student"]
-)
+student_router = APIRouter()
 
 
 @student_router.post("/profile")

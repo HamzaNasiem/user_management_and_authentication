@@ -5,16 +5,13 @@ from app.models import Register_User, Token, User, Teacher, UserType
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 from app.auth import hash_password, get_current_user, authenticate_user, create_access_token, create_and_send_magic_link
-from app.db_engine import get_session
+from app.database import get_session
 from app.utils import send_whatsapp_message
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from app.settings import SECRET_KEY, ALGORITHM
 
-user_router = APIRouter(
-    # prefix="/user",
-    tags=["user"]
-)
+user_router = APIRouter()
 
 
 @user_router.post("/register", response_model=User)

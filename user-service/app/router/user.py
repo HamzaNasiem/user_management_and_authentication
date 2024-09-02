@@ -1,21 +1,23 @@
-#router/user.py
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Request
-from app.models import Register_User, Token, User, Teacher, UserType
+from app.models.user import User, UserCreate, UserType, UserRead
+from app.models.auth_token import AuthToken
+from app.models.teacher import Teacher
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
-from app.auth import hash_password, get_current_user, authenticate_user, create_access_token, create_and_send_magic_link
+from app.auth import hash_password, get_current_user, authenticate_user, create_access_token
+from app.services.whatsapp_message import create_and_send_magic_link
 from app.database import get_session
-from app.utils import send_whatsapp_message
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from app.settings import SECRET_KEY, ALGORITHM
+from app.models.verification_token import VerificationToken, VerificationTokenType
 
 user_router = APIRouter()
 
 
 @user_router.post("/register", response_model=User)
-async def register_user(new_user: Register_User, session: Session = Depends(get_session)):
+async def register_user(new_user: UserCreate, session: Session = Depends(get_session)):
     db_user = session.exec(select(User).where(
         (User.email == new_user.email) | (User.phone == new_user.phone)
     )).first()
@@ -45,7 +47,7 @@ async def register_user(new_user: Register_User, session: Session = Depends(get_
 
     if new_user.phone:
         # Use the helper function to create and send the magic link
-        whatsapp_response = await create_and_send_magic_link(user, new_user.phone)
+        whatsapp_response = await create_and_send_magic_link(user, new_user.phone, session)
         
         if whatsapp_response["status"] != "success":
             raise HTTPException(
@@ -54,7 +56,7 @@ async def register_user(new_user: Register_User, session: Session = Depends(get_
     return user
 
 
-@user_router.post("/login", response_model=Token)
+@user_router.post("/login")
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: Session = Depends(get_session)
@@ -87,40 +89,12 @@ async def resend_verification_link(
         raise HTTPException(status_code=400, detail="User is already verified")
 
     # Use the helper function to create and send the magic link
-    whatsapp_response = await create_and_send_magic_link(user, user.phone)
+    whatsapp_response = await create_and_send_magic_link(user, user.phone,session)
     if whatsapp_response["status"] != "success":
         raise HTTPException(
             status_code=500, detail="Failed to send WhatsApp message")
 
     return {"msg": "Verification link resent successfully"}
-
-
-
-@user_router.get("/verify")
-async def verify_user(token: str, request: Request, session: Session = Depends(get_session)):
-    try:
-        # Decode the token
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email = payload.get("sub")
-        phone = payload.get("phone")
-        if email is None or phone is None:
-            raise HTTPException(status_code=400, detail="Invalid token")
-    except jwt.JWTError:
-        raise HTTPException(status_code=400, detail="Invalid token")
-
-    # Find the user
-    user = session.exec(select(User).where(User.email == email, User.phone == phone)).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # Verify user
-    user.is_verified = True
-    session.add(user)
-    session.commit()
-
-    return {"msg": "Phone number verified successfully"}
-
-
 
 # logout 
 @user_router.post("/logout")
@@ -138,6 +112,6 @@ async def update_user_profile(profile_data: dict, current_user: User = Depends(g
     return {"status": "success", "message": "Profile updated successfully."}
 
 
-@user_router.get("/profile", response_model=User)
+@user_router.get("/profile", response_model=UserRead)
 async def get_profile(current_user: User = Depends(get_current_user)):
     return current_user

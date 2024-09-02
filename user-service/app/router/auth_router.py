@@ -2,10 +2,10 @@
 import random
 from fastapi import APIRouter, Depends, HTTPException
 from app.auth import get_current_user, hash_password, verify_password
-from app.models import User
+from app.models.user import User
 from sqlmodel import Session, select
 from app.database import get_session
-from app.utils import send_whatsapp_message
+from app.services.whatsapp_message import send_whatsapp_message
 
 auth_router = APIRouter()
 

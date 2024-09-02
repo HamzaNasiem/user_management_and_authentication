@@ -1,5 +1,9 @@
 from app import settings
-from sqlmodel import create_engine,Session, SQLModel
+from sqlmodel import create_engine, Session, SQLModel
+from .models.user import User
+from .models.teacher import Teacher
+from .models.auth_token import AuthToken
+from .models.verification_token import VerificationToken
 
 # only needed for psycopg 3 - replace postgresql
 # with postgresql+psycopg in settings.DATABASE_URL

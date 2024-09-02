@@ -1,7 +1,8 @@
 # router/teacher.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
-from app.models import Teacher, User, UserType
+from app.models.user import User, UserType
+from app.models.teacher import Teacher
 from app.auth import get_current_user
 from app.database import get_session
 

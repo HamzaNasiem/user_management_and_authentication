@@ -5,7 +5,7 @@ from app.models.auth_token import AuthToken
 from app.models.teacher import Teacher
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
-from app.auth import hash_password, get_current_user, authenticate_user, create_access_token
+from app.utils.auth import hash_password, get_current_user, authenticate_user, create_access_token
 from app.services.whatsapp_message import create_and_send_magic_link
 from app.database import get_session
 from datetime import datetime, timedelta

@@ -9,7 +9,7 @@ from app.settings import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from app.models.verification_token import VerificationToken, VerificationTokenType
 import hashlib
 import requests
-from app.settings import WHATSAPP_API_KEY
+from app.settings import WHATSAPP_API_KEY, WHATSAPP_API_URL
 
 # Hash generator
 def generate_hash_id(data: str, length=8):
@@ -20,7 +20,7 @@ def generate_hash_id(data: str, length=8):
 
 
 def send_whatsapp_message(number: str, message: str):
-    api_url = "https://chatify.najam.pk/api/v1/sendmessage"
+    api_url = WHATSAPP_API_URL
     payload = {
         "number": number,
         "message": message,

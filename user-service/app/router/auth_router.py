@@ -1,7 +1,7 @@
 # router/auth_router.py
 import random
 from fastapi import APIRouter, Depends, HTTPException
-from app.auth import get_current_user, hash_password, verify_password
+from app.utils.auth import get_current_user, hash_password, verify_password
 from app.models.user import User
 from sqlmodel import Session, select
 from app.database import get_session

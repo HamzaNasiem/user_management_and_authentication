@@ -27,7 +27,7 @@ app = FastAPI(lifespan=lifespan, title="Panaversity User Management and Authenti
                 "description": "Development Server"
             },
             {
-                "url": "http://api.panaversity.com/",
+                "url": "https://4642-103-82-123-115.ngrok-free.app",
                 "description": "Production Server"
             }
         ]
@@ -39,8 +39,8 @@ prefix = "/api/v1"
 def root():
     return {"message": "This is just an authentication service. Please visit http://localhost:8000/docs to see the API documentation."}
 
-app.include_router(verification_router, prefix=f"{prefix}/user", tags=["User","Verification"])
 app.include_router(user_router, prefix=f"{prefix}/user", tags=["User"])
+app.include_router(verification_router, prefix=f"{prefix}/user", tags=["User"])
 app.include_router(teacher_router, prefix=f"{prefix}/teacher", tags=["Teacher"])
 app.include_router(student_router, prefix=f"{prefix}/student", tags=["Student"])
 app.include_router(oauth_router, prefix=f"{prefix}/oauth", tags=["OAuth"])

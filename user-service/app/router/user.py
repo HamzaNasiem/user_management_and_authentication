@@ -5,7 +5,7 @@ from app.models.auth_token import AuthToken
 from app.models.teacher import Teacher
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
-from app.auth import hash_password, get_current_user, authenticate_user, create_access_token
+from app.utils.auth import hash_password, get_current_user, authenticate_user, create_access_token
 from app.services.whatsapp_message import create_and_send_magic_link
 from app.database import get_session
 from datetime import datetime, timedelta
@@ -16,7 +16,7 @@ from app.models.verification_token import VerificationToken, VerificationTokenTy
 user_router = APIRouter()
 
 
-@user_router.post("/register", response_model=User)
+@user_router.post("/register", response_model=UserRead)
 async def register_user(new_user: UserCreate, session: Session = Depends(get_session)):
     db_user = session.exec(select(User).where(
         (User.email == new_user.email) | (User.phone == new_user.phone)

@@ -20,7 +20,6 @@ class UserBase(SQLModel):
     email: str = Field(index=True, unique=True)
     phone: str = Field(index=True, unique=True)
     affiliation: Optional[str] = None
-    is_verified: bool = Field(default=False)
     user_type: UserType = Field(sa_column=Column(SQLAEnum(UserType)))
 
 
@@ -28,6 +27,7 @@ class User(UserBase, table=True):
     id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)
     password: str
     otp: Optional[str] = None
+    is_verified: bool = Field(default=False)
     consumer_id: Optional[str] = None  # For Kong Auth
     issuer: Optional[str] = None  # For Kong Auth (respective plugin secret key for the specific consumer)
     teacher: Optional["Teacher"] = Relationship(back_populates="user")
@@ -59,6 +59,7 @@ class UserCreate(UserBase):
 
 class UserRead(UserBase):
     id: str
+    is_verified: bool
 
 
 class UserUpdate(SQLModel):  # Making all fields optional for partial updates

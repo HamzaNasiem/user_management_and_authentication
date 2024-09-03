@@ -36,7 +36,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 def authenticate_user(session: Session, email: str, password: str):
     user = session.exec(select(User).where(User.email == email)).first()
-    if not user or not verify_password(password, user.password):
+    if not user or not user.is_verified or not verify_password(password, user.password):
         return False
     return user
 

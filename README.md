@@ -4,6 +4,8 @@ This is a FastAPI project for user management and authentication.
 
 ```
 git clone https://github.com/HamzaNasiem/user_management_and_authentication.git
+```
+```
 cd user_management_and_authentication
 ```
 

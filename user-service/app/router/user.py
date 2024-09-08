@@ -17,7 +17,9 @@ user_router = APIRouter(
 @user_router.post("/register", response_model=User)
 async def register_user(new_user: Register_User, session: Session = Depends(get_session)):
     db_user = session.exec(select(User).where(
-        User.email == new_user.email)).first()
+        (User.email == new_user.email) | (User.phone == new_user.phone)
+    )).first()
+    
     if db_user:
         raise HTTPException(
             status_code=409, detail="User with these credentials already exists")
@@ -81,6 +83,6 @@ async def update_user_profile(profile_data: dict, current_user: User = Depends(g
     return {"status": "success", "message": "Profile updated successfully."}
 
 
-@user_router.get("/me", response_model=User)
+@user_router.get("/profile", response_model=User)
 async def get_profile(current_user: User = Depends(get_current_user)):
     return current_user

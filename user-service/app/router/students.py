@@ -16,7 +16,6 @@ user_router = APIRouter(
 
 @user_router.post("/register", response_model=dict)
 async def register_user(new_user: Register_User, session: Session = Depends(get_session)):
-    # Check if user already exists
     db_user = session.exec(select(User).where(
         (User.email == new_user.email) | (User.phone == new_user.phone)
     )).first()
@@ -26,7 +25,6 @@ async def register_user(new_user: Register_User, session: Session = Depends(get_
             status_code=409, detail="User with these credentials already exists"
         )
 
-    # Generate OTP and send it
     otp = generate_otp()
     store_otp(new_user.phone, otp)
 
@@ -37,7 +35,6 @@ async def register_user(new_user: Register_User, session: Session = Depends(get_
             status_code=500, detail="Failed to send WhatsApp message"
         )
 
-    # Store user details temporarily
     otp_storage[new_user.phone] = {
         "otp": otp,
         "expiry": datetime.utcnow() + timedelta(minutes=5),
@@ -73,7 +70,6 @@ async def verify_otp(phone: str, otp: str, session: Session = Depends(get_sessio
         user_type=user_data['user_type']
     )
 
-    # Check if user already exists
     db_user = session.exec(select(User).where(
         (User.email == user.email) | (User.phone == user.phone)
     )).first()
